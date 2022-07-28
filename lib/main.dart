@@ -3,6 +3,7 @@ import 'package:day_targets/src/model/day_target.dart';
 import 'package:day_targets/src/repository/day_repository.dart';
 import 'package:day_targets/src/repository/day_target_repository.dart';
 import 'package:day_targets/src/repository/target_repository.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -11,27 +12,25 @@ import 'src/model/target.dart';
 
 void main() async {
 
-
-  var provider = DatabaseProvider.get;
-  var dayRepository = DayRepository(provider);
-  var targetRepository = TargetRepository(provider);
-  var dayTargetRepository = DayTargetRepository(provider);
-
-  var target = Target(null, 'Keine Snacks');
-  await targetRepository.insert(target);
-
-  var day = Day(null, DateTime.now());
-  await dayRepository.insert(day);
-
-  var dayTarget = DayTarget(day, target, isDone: true);
-  await dayTargetRepository.insert(dayTarget);
-
-  print(await dayRepository.getAll());
-  print(await targetRepository.getAll());
-  print(await dayTargetRepository.getAll());
-  if(target.id != null && day.id != null) {
-    print(await dayTargetRepository.getDayTarget(target.id!, day.id!));
-  }
+  // var dayRepository = DayRepository(provider);
+  // var targetRepository = TargetRepository(provider);
+  // var dayTargetRepository = DayTargetRepository(provider);
+  //
+  // var target = Target(null, 'Keine Snacks');
+  // await targetRepository.insert(target);
+  //
+  // var day = Day(null, DateTime.now());
+  // await dayRepository.insert(day);
+  //
+  // var dayTarget = DayTarget(day, target, isDone: true);
+  // await dayTargetRepository.insert(dayTarget);
+  //
+  // print(await dayRepository.getAll());
+  // print(await targetRepository.getAll());
+  // print(await dayTargetRepository.getAll());
+  // if(target.id != null && day.id != null) {
+  //   print(await dayTargetRepository.getDayTarget(target.id!, day.id!));
+  // }
 
 
   runApp(const MyApp());
@@ -39,41 +38,20 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Day Targets',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.orange,
       ),
-      home: const MyHomePage(title: 'Day Targets'),
+      home: const MyHomePage(title: 'Daily-Targets'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -81,68 +59,158 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  DateTime _currentDate = DateTime.now();
+  List<DayTarget> _targets = [];
+  bool _editMode = false;
 
-  void _incrementCounter() {
+  void _toogleEditMode() {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      _editMode = !_editMode;
     });
+  }
+
+  void _goDayBack() {
+    setState(() {
+      _currentDate = _currentDate.add(const Duration(days: -1));
+    });
+  }
+
+  void _goDayForward() {
+    setState(() {
+      _currentDate = _currentDate.add(const Duration(days: 1));
+    });
+  }
+
+  void _getTargets()  {
+    setState(() {
+      var dayTargetRepository = DayTargetRepository(DatabaseProvider.get);
+      dayTargetRepository.getAll().then((value) => {
+        _targets = value
+      });
+    });
+  }
+
+  List<Column> _renderTargets(){
+    List<Column> columns = _targets.map((e) => Column(
+        children: [
+          ListTile(
+              title: Text(e.target.description),
+              trailing: IconButton(
+                icon: const Icon(Icons.check_sharp),
+                onPressed: () {},
+              ),
+          ),
+          const Divider(),
+      ]),
+    ).toList();
+    columns.add(
+      Column(
+        children: [
+          ListTile(
+            title: _editMode
+                ? TextField(
+                    obscureText: false,
+                    autofocus: true,
+                    onSubmitted: (String value) {_addNewTarget(value);},
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Neues Ziel hinzufügen'
+                    )
+                  )
+                : const Text(''),
+            onTap: _toogleEditMode,
+          ),
+          const Divider(),
+        ])
+    );
+    return columns;
+  }
+
+  String _getMonth() {
+    switch(_currentDate.month) {
+      case 1:
+        return 'Januar';
+      case 2:
+        return 'Februar';
+      case 3:
+        return 'März';
+      case 4:
+        return 'April';
+      case 5:
+        return 'Mai';
+      case 6:
+        return 'Juni';
+      case 7:
+        return 'Juli';
+      case 8:
+        return 'August';
+      case 9:
+        return 'September';
+      case 10:
+        return 'Oktober';
+      case 11:
+        return 'November';
+      case 12:
+        return 'Dezember';
+      default:
+        return _currentDate.month.toString();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    _getTargets();
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back_ios),
+            onPressed: _goDayBack,
+            tooltip: 'vorheriger Tag',
+        ), IconButton(
+            icon: const Icon(Icons.calendar_month),
+            onPressed: () {},
+            tooltip: 'Kalendersicht',
+        ), IconButton(
+            icon: const Icon(Icons.arrow_forward_ios),
+            onPressed: _goDayForward,
+            tooltip: 'nächster Tag',
+          )
+    ],
+        title:
+            Text('${_currentDate.day}. ${_getMonth()} ${_currentDate.year}')
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
+      body: ListView(
+          padding: const EdgeInsets.all(16),
+          children: _renderTargets(),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+      floatingActionButton: _editMode ? null : FloatingActionButton(
+        onPressed:_toogleEditMode,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+
+  void _addNewTarget(String value) async {
+    if(value.isNotEmpty) {
+      print(value);
+      var dayRepository = DayRepository(DatabaseProvider.get);
+      var targetRepository = TargetRepository(DatabaseProvider.get);
+      var dayTargetRepository = DayTargetRepository(DatabaseProvider.get);
+
+      var target = Target(null, value);
+      await targetRepository.insert(target);
+
+      var day = Day(null, _currentDate);
+      await dayRepository.insert(day);
+
+      var dayTarget = DayTarget(day, target, isDone: true);
+      await dayTargetRepository.insert(dayTarget);
+      _getTargets();
+      _toogleEditMode();
+    }
+  }
+
+
 }
