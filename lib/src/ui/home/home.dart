@@ -1,3 +1,4 @@
+import 'package:day_targets/src/widgets/app-day-choose-bar.dart';
 import 'package:day_targets/src/widgets/app_editable_list_tile.dart';
 import 'package:flutter/material.dart';
 
@@ -18,25 +19,13 @@ class Home extends StatefulWidget {
 }
 
 class _Home extends State<Home> {
-  DateTime _currentDate = DateTime.now();
   List<DayTarget> _targets = [];
   bool _editMode = false;
+  DateTime _currentDate = DateTime.now();
 
   void _toggleEditMode() {
     setState(() {
       _editMode = !_editMode;
-    });
-  }
-
-  void _goDayBack() {
-    setState(() {
-      _currentDate = _currentDate.add(const Duration(days: -1));
-    });
-  }
-
-  void _goDayForward() {
-    setState(() {
-      _currentDate = _currentDate.add(const Duration(days: 1));
     });
   }
 
@@ -69,59 +58,17 @@ class _Home extends State<Home> {
     return tiles;
   }
 
-  String _getMonth() {
-    switch(_currentDate.month) {
-      case 1:
-        return 'Januar';
-      case 2:
-        return 'Februar';
-      case 3:
-        return 'März';
-      case 4:
-        return 'April';
-      case 5:
-        return 'Mai';
-      case 6:
-        return 'Juni';
-      case 7:
-        return 'Juli';
-      case 8:
-        return 'August';
-      case 9:
-        return 'September';
-      case 10:
-        return 'Oktober';
-      case 11:
-        return 'November';
-      case 12:
-        return 'Dezember';
-      default:
-        return _currentDate.month.toString();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     _getTargets();
     return Scaffold(
-      appBar: AppBar(
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back_ios),
-              onPressed: _goDayBack,
-              tooltip: 'vorheriger Tag',
-            ), IconButton(
-              icon: const Icon(Icons.calendar_month),
-              onPressed: () {},
-              tooltip: 'Kalendersicht',
-            ), IconButton(
-              icon: const Icon(Icons.arrow_forward_ios),
-              onPressed: _goDayForward,
-              tooltip: 'nächster Tag',
-            )
-          ],
-          title:
-          Text('${_currentDate.day}. ${_getMonth()} ${_currentDate.year}')
+      appBar: AppDayChooseBar(
+        currentDate: _currentDate,
+        onChangeDate: (DateTime newDate) {
+            setState(() {
+              _currentDate = newDate;
+            });
+        },
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -153,6 +100,4 @@ class _Home extends State<Home> {
       // _toggleEditMode();
     }
   }
-
-
 }
