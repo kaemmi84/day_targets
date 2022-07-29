@@ -24,7 +24,7 @@ class DatabaseProvider {
   Future _init() async {
     WidgetsFlutterBinding.ensureInitialized();
     var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, 'day_targets_database3.db');
+    String path = join(databasesPath, 'day_targets_database.db');
 
     _db = await openDatabase(path, version: 1,
         onCreate: (Database db, int version) async {

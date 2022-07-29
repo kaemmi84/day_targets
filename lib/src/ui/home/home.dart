@@ -1,5 +1,5 @@
+import 'package:day_targets/src/widgets/app_editable_list_tile.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 import '../../data/database_provider.dart';
 import '../../data/repository/day_repository.dart';
@@ -22,7 +22,7 @@ class _Home extends State<Home> {
   List<DayTarget> _targets = [];
   bool _editMode = false;
 
-  void _toogleEditMode() {
+  void _toggleEditMode() {
     setState(() {
       _editMode = !_editMode;
     });
@@ -49,40 +49,24 @@ class _Home extends State<Home> {
     });
   }
 
-  List<Column> _renderTargets(){
-    List<Column> columns = _targets.map((e) => Column(
-        children: [
-          ListTile(
-            title: Text(e.target.description),
-            trailing: IconButton(
-              icon: const Icon(Icons.check_sharp),
-              onPressed: () {},
-            ),
-          ),
-          const Divider(),
-        ]),
+  List<AppEditableListTile> _renderTargets(){
+    List<AppEditableListTile> tiles = _targets.map((e) =>
+        AppEditableListTile(
+            onSubmit: (String value) {},
+            editMode: false,
+            value: e.target.description,
+            labelText: 'Ziel bearbeiten'
+        ),
     ).toList();
-    columns.add(
-        Column(
-            children: [
-              ListTile(
-                title: _editMode
-                    ? TextField(
-                    obscureText: false,
-                    autofocus: true,
-                    onSubmitted: (String value) {_addNewTarget(value);},
-                    decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Neues Ziel hinzufügen'
-                    )
-                )
-                    : const Text(''),
-                onTap: _toogleEditMode,
-              ),
-              const Divider(),
-            ])
+    tiles.add(
+        AppEditableListTile(
+            onSubmit: (String value) async {_addNewTarget(value);},
+            editMode: _editMode,
+            value: '',
+            labelText: 'Neues Ziel hinzufügen'
+        ),
     );
-    return columns;
+    return tiles;
   }
 
   String _getMonth() {
@@ -144,7 +128,7 @@ class _Home extends State<Home> {
         children: _renderTargets(),
       ),
       floatingActionButton: _editMode ? null : FloatingActionButton(
-        onPressed:_toogleEditMode,
+        onPressed:_toggleEditMode,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
@@ -153,7 +137,6 @@ class _Home extends State<Home> {
 
   void _addNewTarget(String value) async {
     if(value.isNotEmpty) {
-      print(value);
       var dayRepository = DayRepository(DatabaseProvider.get);
       var targetRepository = TargetRepository(DatabaseProvider.get);
       var dayTargetRepository = DayTargetRepository(DatabaseProvider.get);
@@ -167,7 +150,7 @@ class _Home extends State<Home> {
       var dayTarget = DayTarget(day, target, isDone: true);
       await dayTargetRepository.insert(dayTarget);
       _getTargets();
-      _toogleEditMode();
+      // _toggleEditMode();
     }
   }
 
