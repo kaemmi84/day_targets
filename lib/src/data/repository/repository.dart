@@ -1,9 +1,11 @@
 import '../dao/dao.dart';
-import '../helper/database_provider.dart';
+import '../database_provider.dart';
 
 abstract class Repository<T> {
   Dao<T> get dao;
-  late DatabaseProvider databaseProvider;
+  final DatabaseProvider databaseProvider;
+
+  const Repository(this.databaseProvider);
 
   Future<T> insert(T object);
 

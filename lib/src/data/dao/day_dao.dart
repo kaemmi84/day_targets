@@ -1,4 +1,4 @@
-import '../model/day.dart';
+import '../../models/day.dart';
 import 'dao.dart';
 
 class DayDao extends Dao<Day> {

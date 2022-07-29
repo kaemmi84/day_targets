@@ -1,5 +1,5 @@
 
-import '../model/target.dart';
+import '../../models/target.dart';
 import 'dao.dart';
 
 class TargetDao extends Dao<Target> {

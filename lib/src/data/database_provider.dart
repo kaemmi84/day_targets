@@ -1,15 +1,12 @@
 import 'dart:async';
 
-import 'package:day_targets/src/dao/target_dao.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../dao/day_dao.dart';
-import '../dao/day_target_dao.dart';
-import '../model/day.dart';
-import '../model/day_target.dart';
-import '../model/target.dart';
+import 'dao/day_dao.dart';
+import 'dao/day_target_dao.dart';
+import 'dao/target_dao.dart';
 
 class DatabaseProvider {
   static final _instance = DatabaseProvider._internal();

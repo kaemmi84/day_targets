@@ -1,19 +1,15 @@
+import '../../models/day_target.dart';
 import '../dao/day_target_dao.dart';
-import '../helper/database_provider.dart';
-import '../model/day_target.dart';
 import 'repository.dart';
 
 class DayTargetRepository extends Repository<DayTarget> {
   String get columnDay => (dao as DayTargetDao).columnDay;
   String get columnTarget => (dao as DayTargetDao).columnTarget;
+
   @override
   get dao => DayTargetDao();
 
-
-  @override
-  DatabaseProvider databaseProvider;
-
-  DayTargetRepository(this.databaseProvider);
+  DayTargetRepository(databaseProvider): super(databaseProvider);
 
   @override
   Future<DayTarget> insert(DayTarget object) async {

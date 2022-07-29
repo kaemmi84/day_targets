@@ -1,7 +1,6 @@
-import 'package:day_targets/src/model/target.dart';
-
-import '../model/day.dart';
-import '../model/day_target.dart';
+import '../../models/day.dart';
+import '../../models/day_target.dart';
+import '../../models/target.dart';
 import 'dao.dart';
 
 class DayTargetDao extends Dao<DayTarget> {
