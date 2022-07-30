@@ -4,11 +4,11 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 class ListItem extends StatefulWidget {
   final TextEditingController controller;
   final String? hintText;
-  void Function()? onEditingComplete;
-  void Function(BuildContext context)? onDeleteClick;
-  void Function()? onDeleteSlide;
+  final void Function()? onEditingComplete;
+  final void Function(BuildContext context)? onDeleteClick;
+  final void Function()? onDeleteSlide;
 
-  ListItem({
+  const ListItem({
     Key? key,
     required this.controller,
     this.hintText,
