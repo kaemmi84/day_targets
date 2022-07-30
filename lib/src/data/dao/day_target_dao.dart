@@ -35,8 +35,8 @@ class DayTargetDao extends Dao<DayTarget> {
           DateTime.tryParse(query[_subColumnDayDate]) ?? DateTime.now()
       ),
       Target(
+          query[_subColumnTargetDescription],
           query[_subColumnTargetId],
-          query[_subColumnTargetDescription]
       ),
       isDone: query[_columnIsDone] == 1
     );

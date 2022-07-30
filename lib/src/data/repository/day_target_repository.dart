@@ -69,4 +69,33 @@ class DayTargetRepository extends Repository<DayTarget> {
     ''', [targetId, dayId]);
     return dao.fromList(maps).first;
   }
+
+  Future<List<DayTarget>> getDayTargetByTargetId(int targetId) async {
+    final db = await databaseProvider.db();
+    var maps = await db.rawQuery('''
+    SELECT 
+      t.id AS targetId,
+      t.description AS description,
+      d.id AS dayId,
+      d.date AS date,
+      dt.isDone AS isDone 
+    FROM
+      targets t
+      INNER JOIN dayTargets dt ON t.id = dt.target
+      INNER JOIN days d ON dt.day = d.id
+      WHERE t.id = ?
+    ''', [targetId]);
+    return dao.fromList(maps);
+  }
+
+  Future<int> deleteDayTargetByTargetId(int targetId) async {
+    final db = await databaseProvider.db();
+    await db.rawDelete('''
+      DELETE FROM dayTargets
+      WHERE target IN (
+        SELECT id FROM targets WHERE id = ?
+      );
+    ''', [targetId]);
+    return targetId;
+  }
 }

@@ -2,10 +2,7 @@ class Target {
   int? id;
   final String description;
 
-  Target(
-    this.id,
-    this.description
-  );
+  Target(this.description, [this.id]);
 
   @override
   String toString() {

@@ -19,8 +19,8 @@ class TargetDao extends Dao<Target> {
   @override
   Target fromMap(Map<String, dynamic> query) {
     return Target(
+        query[_columnDescription],
         query[columnId],
-        query[_columnDescription]
     );
   }
 
