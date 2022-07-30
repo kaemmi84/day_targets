@@ -8,6 +8,7 @@ class ListItem extends StatefulWidget {
   final void Function(BuildContext context)? onDeleteClick;
   final void Function()? onDeleteSlide;
   final void Function(String value)? onChange;
+  final void Function(FocusNode focusNode)? onFocusChange;
 
   const ListItem({
     Key? key,
@@ -17,6 +18,7 @@ class ListItem extends StatefulWidget {
     this.onChange,
     this.onDeleteClick,
     this.onDeleteSlide,
+    this.onFocusChange
   }) : super(key: key);
 
   @override
@@ -31,6 +33,7 @@ class _ListItemState extends State<ListItem> {
   void initState() {
     super.initState();
     _focusNode = FocusNode();
+    _focusNode.addListener(_onFocusChange);
   }
 
   @override
@@ -104,6 +107,12 @@ class _ListItemState extends State<ListItem> {
       );
     } else {
       return listTile;
+    }
+  }
+
+  void _onFocusChange() {
+    if(widget.onFocusChange != null) {
+      widget.onFocusChange!.call(_focusNode);
     }
   }
 }

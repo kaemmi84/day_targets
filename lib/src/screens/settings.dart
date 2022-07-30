@@ -32,9 +32,15 @@ class _SettingsState extends State<Settings> {
                   return ListItem(
                       controller: controller,
                       hintText: 'Neues Ziel hinzufügen',
-                      onEditingComplete: () {
-                        _addNewTarget(controller, targets);
-                      });
+                      // onEditingComplete: () {
+                      //   _addNewTarget(controller, targets);
+                      // },
+                      onFocusChange: (focusNode) {
+                        if(!focusNode.hasFocus) {
+                          _addNewTarget(controller, targets);
+                        }
+                      },
+                  );
                 }
 
                 final target = targets[index];
