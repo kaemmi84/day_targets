@@ -23,11 +23,7 @@ class _SettingsState extends State<Settings> {
       appBar: AppBar(
         title: const Text('Ziele definieren'),
       ),
-      body: targets.isEmpty
-          ? const Center(
-              child: Text('Noch keine Ziele hinterlegt'),
-            )
-          : ListView.builder(
+      body: ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: targets.length + 1,
               itemBuilder: (context, index) {

@@ -3,7 +3,7 @@ import '../dao/day_target_dao.dart';
 import 'repository.dart';
 
 class DayTargetRepository extends Repository<DayTarget> {
-  String get columnDay => (dao as DayTargetDao).columnDay;
+  String get columnDate => (dao as DayTargetDao).columnDate;
   String get columnTarget => (dao as DayTargetDao).columnTarget;
 
   @override
@@ -22,7 +22,8 @@ class DayTargetRepository extends Repository<DayTarget> {
   Future<DayTarget> delete(DayTarget object) async {
     final db = await databaseProvider.db();
     await db.delete(dao.tableName,
-        where: '$columnDay = ? AND $columnTarget = ?', whereArgs: [object.day.id, object.target.id]);
+        where: '$columnDate = ? AND $columnTarget = ?',
+        whereArgs: [object.date.toIso8601String(), object.target.id]);
     return object;
   }
 
@@ -30,7 +31,8 @@ class DayTargetRepository extends Repository<DayTarget> {
   Future<DayTarget> update(DayTarget object) async {
     final db = await databaseProvider.db();
     await db.update(dao.tableName, dao.toMap(object),
-        where: '$columnDay = ? AND $columnTarget = ?', whereArgs: [object.day.id, object.target.id]);
+        where: '$columnDate = ? AND $columnTarget = ?',
+        whereArgs: [object.date.toIso8601String(), object.target.id]);
     return object;
   }
 
@@ -41,13 +43,11 @@ class DayTargetRepository extends Repository<DayTarget> {
     SELECT 
       t.id AS targetId,
       t.description AS description,
-      d.id AS dayId,
-      d.date AS date,
+      dt.date AS date,
       dt.isDone AS isDone 
     FROM
       targets t
       INNER JOIN dayTargets dt ON t.id = dt.target
-      INNER JOIN days d ON dt.day = d.id
     ''');
     return dao.fromList(maps);
   }
@@ -58,13 +58,11 @@ class DayTargetRepository extends Repository<DayTarget> {
     SELECT 
       t.id AS targetId,
       t.description AS description,
-      d.id AS dayId,
-      d.date AS date,
+      dt.date AS date,
       dt.isDone AS isDone 
     FROM
       targets t
       INNER JOIN dayTargets dt ON t.id = dt.target
-      INNER JOIN days d ON dt.day = d.id
       WHERE t.id = ? AND d.id = ?
     ''', [targetId, dayId]);
     return dao.fromList(maps).first;
@@ -76,13 +74,11 @@ class DayTargetRepository extends Repository<DayTarget> {
     SELECT 
       t.id AS targetId,
       t.description AS description,
-      d.id AS dayId,
-      d.date AS date,
+      dt.date AS date,
       dt.isDone AS isDone 
     FROM
       targets t
       INNER JOIN dayTargets dt ON t.id = dt.target
-      INNER JOIN days d ON dt.day = d.id
       WHERE t.id = ?
     ''', [targetId]);
     return dao.fromList(maps);

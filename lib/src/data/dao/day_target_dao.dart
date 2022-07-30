@@ -1,15 +1,12 @@
-import '../../models/day.dart';
 import '../../models/day_target.dart';
 import '../../models/target.dart';
 import 'dao.dart';
 
 class DayTargetDao extends Dao<DayTarget> {
-  final columnDay = 'day';
+  final columnDate = 'date';
   final columnTarget = 'target';
   final _subColumnTargetId = 'targetId';
   final _subColumnTargetDescription = 'description';
-  final _subColumnDayId = 'dayId';
-  final _subColumnDayDate = 'date';
   final _columnIsDone = 'isDone';
 
   @override
@@ -21,31 +18,28 @@ class DayTargetDao extends Dao<DayTarget> {
   @override
   String get createTableQuery =>
       '''CREATE TABLE $tableName(
-          $columnDay INTEGER,
+          $columnDate STRING,
           $columnTarget INTEGER,
           $_columnIsDone INTEGER,
-          PRIMARY KEY ($columnDay, $columnTarget))''';
+          PRIMARY KEY ($columnDate, $columnTarget))''';
 
   @override
   //need a joint function
   DayTarget fromMap(Map<String, dynamic> query) {
     return DayTarget(
-      Day(
-          query[_subColumnDayId],
-          DateTime.tryParse(query[_subColumnDayDate]) ?? DateTime.now()
-      ),
       Target(
           query[_subColumnTargetDescription],
           query[_subColumnTargetId],
       ),
-      isDone: query[_columnIsDone] == 1
+      DateTime.tryParse(query[columnDate]) ?? DateTime.now(),
+      query[_columnIsDone] == 1
     );
   }
 
   @override
   Map<String, dynamic> toMap(DayTarget object) {
     return <String, dynamic>{
-      columnDay: object.day.id,
+      columnDate: object.date.toIso8601String(),
       columnTarget: object.target.id,
       _columnIsDone: object.isDone ? 1 : 0,
     };

@@ -4,7 +4,6 @@ import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'dao/day_dao.dart';
 import 'dao/day_target_dao.dart';
 import 'dao/target_dao.dart';
 
@@ -28,7 +27,6 @@ class DatabaseProvider {
 
     _db = await openDatabase(path, version: 1,
         onCreate: (Database db, int version) async {
-          await db.execute(DayDao().createTableQuery);
           await db.execute(TargetDao().createTableQuery);
           await db.execute(DayTargetDao().createTableQuery);
         });

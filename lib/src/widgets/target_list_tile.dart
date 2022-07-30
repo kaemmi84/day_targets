@@ -1,4 +1,4 @@
-import 'package:day_targets/src/_view_models/shown_target.dart';
+import 'package:day_targets/src/models/target.dart';
 import 'package:flutter/material.dart';
 
 enum Mode {
@@ -9,11 +9,11 @@ enum Mode {
 
 class TargetListTile extends StatefulWidget {
   final void Function(String value) onSubmit;
-  final void Function(Mode mode, ShownDayTarget target) onEditModeChange;
+  final void Function(Mode mode, Target target) onEditModeChange;
   final Mode editMode;
   final String value;
   final String labelText;
-  final ShownDayTarget target;
+  final Target target;
 
   const TargetListTile({
     required this.onSubmit,
