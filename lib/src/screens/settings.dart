@@ -37,7 +37,7 @@ class _SettingsState extends State<Settings> {
                       controller: controller,
                       hintText: 'Neues Ziel hinzufügen',
                       onEditingComplete: () {
-                        addNewTarget(controller, targets);
+                        _addNewTarget(controller, targets);
                       });
                 }
 
@@ -46,6 +46,14 @@ class _SettingsState extends State<Settings> {
                     TextEditingController(text: target.description);
                 return ListItem(
                   controller: editController,
+                  onEditingComplete: () {
+                    _editTarget(editController, target, targets);
+                  },
+                  onChange: (value) {
+                      if(editController.text.isEmpty) {
+                        _deleteTarget(target, targets);
+                      }
+                  },
                   onDeleteClick: (context) {
                     _deleteTarget(target, targets);
                   },
@@ -57,7 +65,7 @@ class _SettingsState extends State<Settings> {
     );
   }
 
-  void addNewTarget(TextEditingController controller, List<Target> targets) {
+  void _addNewTarget(TextEditingController controller, List<Target> targets) {
     if (controller.text.isNotEmpty) {
       Target newTarget = Target(controller.text);
       TargetRepository(DatabaseProvider.get).insert(newTarget).then((result) {
@@ -65,6 +73,17 @@ class _SettingsState extends State<Settings> {
           targets.add(result);
         });
       });
+    }
+  }
+
+  void _editTarget(TextEditingController controller, Target target, List<Target> targets) {
+    if (controller.text.isNotEmpty) {
+      target.description = controller.text;
+      TargetRepository(DatabaseProvider.get).update(target).then((result) {
+        setState(() {});
+      });
+    } else {
+      _deleteTarget(target, targets);
     }
   }
 

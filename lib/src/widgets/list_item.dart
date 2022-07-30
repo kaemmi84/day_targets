@@ -7,12 +7,14 @@ class ListItem extends StatefulWidget {
   final void Function()? onEditingComplete;
   final void Function(BuildContext context)? onDeleteClick;
   final void Function()? onDeleteSlide;
+  final void Function(String value)? onChange;
 
   const ListItem({
     Key? key,
     required this.controller,
     this.hintText,
     this.onEditingComplete,
+    this.onChange,
     this.onDeleteClick,
     this.onDeleteSlide,
   }) : super(key: key);
@@ -47,6 +49,14 @@ class _ListItemState extends State<ListItem> {
         decoration: InputDecoration(
           hintText: widget.hintText,
         ),
+        onChanged: (value) {
+          if(widget.onChange != null) {
+            widget.onChange!.call(value);
+          }
+        },
+        onSubmitted: (value) {
+          print('submitting');
+        },
         onEditingComplete: () {
           setState(() {
             _isEnabled = !_isEnabled;
