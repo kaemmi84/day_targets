@@ -1,6 +1,6 @@
 class Target {
   int? id;
-  final String description;
+  String description;
 
   Target(this.description, [this.id]);
 
