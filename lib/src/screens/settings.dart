@@ -48,7 +48,7 @@ class _SettingsState extends State<Settings> {
 
               final target = targets[index];
               var editController =
-              TextEditingController(text: target.description);
+                  TextEditingController(text: target.description);
               return ListItem(
                 controller: editController,
                 onEditingComplete: () {
@@ -82,8 +82,8 @@ class _SettingsState extends State<Settings> {
     }
   }
 
-  void _editTarget(TextEditingController controller, Target target,
-      List<Target> targets) {
+  void _editTarget(
+      TextEditingController controller, Target target, List<Target> targets) {
     if (controller.text.isNotEmpty) {
       target.description = controller.text;
       TargetRepository(DatabaseProvider.get).update(target).then((result) {

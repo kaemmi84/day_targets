@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
-class AppDayChooseBar extends StatelessWidget  implements PreferredSizeWidget {
+class AppDayChooseBar extends StatelessWidget implements PreferredSizeWidget {
   DateTime currentDate;
   final double height;
   final Function(DateTime newDate) onChangeDate;
@@ -21,39 +20,41 @@ class AppDayChooseBar extends StatelessWidget  implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    var actions = [
+      IconButton(
+        icon: const Icon(Icons.arrow_back_ios),
+        onPressed: _goDayBack,
+        tooltip: 'vorheriger Tag',
+      ), IconButton(
+        icon: const Icon(Icons.calendar_month),
+        onPressed: () {},
+        tooltip: 'Kalendersicht',
+      ), IconButton(
+        icon: const Icon(Icons.arrow_forward_ios),
+        onPressed: currentDate.isBefore(_getToday()) ? _goDayForward : null,
+        tooltip: currentDate.isBefore(_getToday()) ? 'nächster Tag' : 'Nur aktuelle Ziele sind einstellbar',
+      )
+    ];
+
     return AppBar(
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back_ios),
-            onPressed: _goDayBack,
-            tooltip: 'vorheriger Tag',
-          ), IconButton(
-            icon: const Icon(Icons.calendar_month),
-            onPressed: () {},
-            tooltip: 'Kalendersicht',
-          ), IconButton(
-            icon: const Icon(Icons.arrow_forward_ios),
-            onPressed: _goDayForward,
-            tooltip: 'nächster Tag',
-          )
-        ],
+        actions: actions,
         title:
         Text('${currentDate.day}. ${_getMonth()} ${currentDate.year}')
     );
   }
 
   void _goDayBack() {
-      currentDate = currentDate.add(const Duration(days: -1));
-      onChangeDate.call(currentDate);
+    currentDate = currentDate.add(const Duration(days: -1));
+    onChangeDate.call(currentDate);
   }
 
   void _goDayForward() {
-      currentDate = currentDate.add(const Duration(days: 1));
-      onChangeDate.call(currentDate);
+    currentDate = currentDate.add(const Duration(days: 1));
+    onChangeDate.call(currentDate);
   }
 
   String _getMonth() {
-    switch(currentDate.month) {
+    switch (currentDate.month) {
       case 1:
         return 'Januar';
       case 2:
@@ -81,5 +82,10 @@ class AppDayChooseBar extends StatelessWidget  implements PreferredSizeWidget {
       default:
         return currentDate.month.toString();
     }
+  }
+
+  DateTime _getToday() {
+    var now = DateTime.now();
+    return DateTime(now.year, now.month, now.day);
   }
 }
