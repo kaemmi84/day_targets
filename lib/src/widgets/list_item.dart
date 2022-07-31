@@ -3,7 +3,9 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 
 class ListItem extends StatefulWidget {
   final TextEditingController controller;
+  final FocusNode? focusNode;
   final String? hintText;
+  final bool? autoFocus;
   final void Function()? onEditingComplete;
   final void Function(BuildContext context)? onDeleteClick;
   final void Function()? onDeleteSlide;
@@ -13,7 +15,9 @@ class ListItem extends StatefulWidget {
   const ListItem({
     Key? key,
     required this.controller,
+    this.focusNode,
     this.hintText,
+    this.autoFocus,
     this.onEditingComplete,
     this.onChange,
     this.onDeleteClick,
@@ -32,12 +36,17 @@ class _ListItemState extends State<ListItem> {
   @override
   void initState() {
     super.initState();
-    _focusNode = FocusNode();
+    if(widget.focusNode != null) {
+      _focusNode = widget.focusNode!;
+    } else {
+      _focusNode = FocusNode();
+    }
     _focusNode.addListener(_onFocusChange);
   }
 
   @override
   void dispose() {
+    _focusNode.removeListener(_onFocusChange);
     _focusNode.dispose();
     super.dispose();
   }
@@ -47,6 +56,7 @@ class _ListItemState extends State<ListItem> {
     var listTile = ListTile(
       title: TextField(
         controller: widget.controller,
+        autofocus: widget.autoFocus == null ? false : widget.autoFocus!,
         focusNode: _focusNode,
         enabled: _isEnabled,
         decoration: InputDecoration(
@@ -56,9 +66,6 @@ class _ListItemState extends State<ListItem> {
           if(widget.onChange != null) {
             widget.onChange!.call(value);
           }
-        },
-        onSubmitted: (value) {
-          print('submitting');
         },
         onEditingComplete: () {
           setState(() {

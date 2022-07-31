@@ -19,51 +19,55 @@ class _SettingsState extends State<Settings> {
   Widget build(BuildContext context) {
     final targets =
         context.dependOnInheritedWidgetOfExactType<GlobalAppState>()!.targets;
+    var controller = TextEditingController(text: '');
     return Scaffold(
       appBar: AppBar(
         title: const Text('Ziele definieren'),
       ),
-      body: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: targets.length + 1,
-              itemBuilder: (context, index) {
-                if (index == targets.length) {
-                  var controller = TextEditingController(text: '');
-                  return ListItem(
-                      controller: controller,
-                      hintText: 'Neues Ziel hinzufügen',
-                      // onEditingComplete: () {
-                      //   _addNewTarget(controller, targets);
-                      // },
-                      onFocusChange: (focusNode) {
-                        if(!focusNode.hasFocus) {
-                          _addNewTarget(controller, targets);
-                        }
-                      },
-                  );
-                }
-
-                final target = targets[index];
-                var editController =
-                    TextEditingController(text: target.description);
+      body: GestureDetector(
+        onTap: () {
+          _addNewTarget(controller, targets);
+          controller.text = '';
+        },
+        child: ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: targets.length + 1,
+            itemBuilder: (context, index) {
+              if (index == targets.length) {
                 return ListItem(
-                  controller: editController,
-                  onEditingComplete: () {
-                    _editTarget(editController, target, targets);
-                  },
-                  onChange: (value) {
-                      if(editController.text.isEmpty) {
-                        _deleteTarget(target, targets);
-                      }
-                  },
-                  onDeleteClick: (context) {
-                    _deleteTarget(target, targets);
-                  },
-                  onDeleteSlide: () {
-                    _deleteTarget(target, targets);
+                  controller: controller,
+                  hintText: 'Neues Ziel hinzufügen',
+                  autoFocus: true,
+                  onFocusChange: (focusNode) {
+                    if (!focusNode.hasFocus) {
+                      _addNewTarget(controller, targets);
+                    }
                   },
                 );
-              }),
+              }
+
+              final target = targets[index];
+              var editController =
+              TextEditingController(text: target.description);
+              return ListItem(
+                controller: editController,
+                onEditingComplete: () {
+                  _editTarget(editController, target, targets);
+                },
+                onChange: (value) {
+                  if (editController.text.isEmpty) {
+                    _deleteTarget(target, targets);
+                  }
+                },
+                onDeleteClick: (context) {
+                  _deleteTarget(target, targets);
+                },
+                onDeleteSlide: () {
+                  _deleteTarget(target, targets);
+                },
+              );
+            }),
+      ),
     );
   }
 
@@ -78,7 +82,8 @@ class _SettingsState extends State<Settings> {
     }
   }
 
-  void _editTarget(TextEditingController controller, Target target, List<Target> targets) {
+  void _editTarget(TextEditingController controller, Target target,
+      List<Target> targets) {
     if (controller.text.isNotEmpty) {
       target.description = controller.text;
       TargetRepository(DatabaseProvider.get).update(target).then((result) {
