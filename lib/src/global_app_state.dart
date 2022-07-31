@@ -14,9 +14,12 @@ class GlobalAppState extends InheritedWidget {
     required Widget child,
   }) : super (key: key, child: child);
 
+  static GlobalAppState of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<GlobalAppState>()!;
+  }
+
   @override
   bool updateShouldNotify(GlobalAppState oldWidget) {
     return targets != oldWidget.targets || dayTargets != oldWidget.dayTargets;
   }
-
 }

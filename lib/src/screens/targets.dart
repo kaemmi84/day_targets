@@ -1,7 +1,7 @@
 import 'package:day_targets/src/data/database_provider.dart';
 import 'package:day_targets/src/data/repository/day_target_repository.dart';
 import 'package:day_targets/src/models/day_target.dart';
-import 'package:day_targets/src/widgets/app-day-choose-bar.dart';
+import 'package:day_targets/src/widgets/app_day_choose_bar.dart';
 import 'package:flutter/material.dart';
 
 import '../global_app_state.dart';
@@ -18,8 +18,7 @@ class _Targets extends State<Targets> {
 
   @override
   Widget build(BuildContext context) {
-    final dayTargets = context
-        .dependOnInheritedWidgetOfExactType<GlobalAppState>()!
+    final dayTargets = GlobalAppState.of(context)
         .dayTargets
         .where((dayTarget) => dayTarget.date.isAtSameMomentAs(_currentDate))
         .toList();
@@ -59,6 +58,13 @@ class _Targets extends State<Targets> {
     _currentDate = DateTime(now.year, now.month, now.day);
   }
 
+  @override
+  void didChangeDependencies(){
+    super.didChangeDependencies();
+    _createDayTargetIfNecessary();
+  }
+
+
   _toggleCheckStateTarget(DayTarget dayTarget) {
     dayTarget.isDone = !dayTarget.isDone;
     DayTargetRepository(DatabaseProvider.get)
@@ -67,12 +73,8 @@ class _Targets extends State<Targets> {
   }
 
   void _createDayTargetIfNecessary() {
-    for (var target in context
-        .dependOnInheritedWidgetOfExactType<GlobalAppState>()!
-        .targets) {
-      var dayTargets = context
-          .dependOnInheritedWidgetOfExactType<GlobalAppState>()!
-          .dayTargets;
+    for (var target in GlobalAppState.of(context).targets) {
+      var dayTargets = GlobalAppState.of(context).dayTargets;
       var currentDayTargets = dayTargets.where((dayTarget) {
         return dayTarget.target == target
             && dayTarget.date.isAtSameMomentAs(_currentDate);
@@ -85,6 +87,8 @@ class _Targets extends State<Targets> {
             dayTargets.add(dt);
           });
         });
+      } else {
+        setState(() {});
       }
     }
   }

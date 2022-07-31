@@ -8,7 +8,10 @@ import 'package:flutter/material.dart';
 import '../global_app_state.dart';
 
 class Settings extends StatefulWidget {
-  const Settings({Key? key}) : super(key: key);
+  final void Function()? onChange;
+
+  const Settings({Key? key, this.onChange}) : super(key: key);
+
 
   @override
   State<Settings> createState() => _SettingsState();
@@ -17,8 +20,7 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
-    final targets =
-        context.dependOnInheritedWidgetOfExactType<GlobalAppState>()!.targets;
+    final targets = GlobalAppState.of(context).targets;
     var controller = TextEditingController(text: '');
     return Scaffold(
       appBar: AppBar(
@@ -78,6 +80,7 @@ class _SettingsState extends State<Settings> {
         setState(() {
           targets.add(result);
         });
+        _triggerOnChange();
       });
     }
   }
@@ -88,6 +91,7 @@ class _SettingsState extends State<Settings> {
       target.description = controller.text;
       TargetRepository(DatabaseProvider.get).update(target).then((result) {
         setState(() {});
+        _triggerOnChange();
       });
     } else {
       _deleteTarget(target, targets);
@@ -106,8 +110,15 @@ class _SettingsState extends State<Settings> {
           setState(() {
             targets.remove(value);
           });
+          _triggerOnChange();
         });
       });
+    }
+  }
+
+  _triggerOnChange() {
+    if(widget.onChange != null) {
+      widget.onChange!.call();
     }
   }
 }

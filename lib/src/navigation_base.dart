@@ -3,7 +3,9 @@ import 'package:day_targets/src/screens/targets.dart';
 import 'package:flutter/material.dart';
 
 class NavigationBase extends StatefulWidget {
-  const NavigationBase({Key? key}) : super(key: key);
+  final void Function()? onChange;
+
+  const NavigationBase({Key? key, this.onChange}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _NavigationBase();
@@ -17,9 +19,14 @@ class _NavigationBase extends State<NavigationBase> {
     return Scaffold(
       body: IndexedStack(
         index: _currentIndex,
-        children: const [
-          Targets(),
-          Settings(),
+        children: [
+          const Targets(),
+          Settings(
+            onChange: () {
+              setState(() {});
+              _triggerOnChange();
+            },
+          ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -35,6 +42,12 @@ class _NavigationBase extends State<NavigationBase> {
         },
       )
     );
+  }
+
+  _triggerOnChange() {
+    if(widget.onChange != null) {
+      widget.onChange!.call();
+    }
   }
 
 }

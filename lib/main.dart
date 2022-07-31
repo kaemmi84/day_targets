@@ -23,7 +23,6 @@ class _MyAppState extends State<MyApp> {
   List<Target> _targets = [];
   List<DayTarget> _dayTargets = [];
 
-
   @override
   Widget build(BuildContext context) {
     return GlobalAppState(
@@ -34,7 +33,12 @@ class _MyAppState extends State<MyApp> {
         theme: ThemeData(
           primarySwatch: Colors.orange,
         ),
-        home: const NavigationBase(),
+        home: NavigationBase(
+          onChange: () {
+            _loadTargets();
+            _loadDayTargets();
+          },
+        ),
       )
     );
   }
@@ -42,19 +46,28 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    _getTargets();
-    _getDayTargets();
   }
 
-  Future<List<Target>> _getTargets() async {
+  @override
+  void didChangeDependencies(){
+    super.didChangeDependencies();
+    _loadTargets();
+    _loadDayTargets();
+  }
+
+  void _loadTargets() {
       var targetRepository = TargetRepository(DatabaseProvider.get);
-      _targets = await targetRepository.getAll();
-      return _targets;
+      targetRepository.getAll().then((results) {
+        _targets = results;
+        setState(() {});
+      });
   }
 
-  Future<List<DayTarget>> _getDayTargets() async {
+  void _loadDayTargets() {
       var dayTargetRepository = DayTargetRepository(DatabaseProvider.get);
-      _dayTargets = await dayTargetRepository.getAll();
-      return _dayTargets;
+      dayTargetRepository.getAll().then((results) {
+        _dayTargets = results;
+        setState(() {});
+      });
   }
 }
